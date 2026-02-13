@@ -128,8 +128,8 @@ const translations = {
   en: {
     nav: { home: 'Home', pokedex: 'Pokedex', movedex: 'Movedex', region: 'Region', guides: 'Guides' },
     hero: {
-      titlePrefix: 'Master the World of',
-      subtitle: 'Complete database. Using local JSON files from src/data/.',
+      titlePrefix: 'Pokedex',
+      subtitle: 'Gabut',
       btnPokedex: 'Open Pokedex',
     },
     movedex: {
