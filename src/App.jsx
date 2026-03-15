@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Search, Map as MapIcon, BookOpen, Backpack, Calculator, Menu, X, ChevronRight, Star, ArrowRight, TrendingUp, Globe, ArrowLeft, Zap, Plus, Save, Trash2, MapPin, ListFilter, CornerDownRight, Sword, Upload, FileJson, AlertCircle, CheckCircle, Bell, Calendar, Users, Activity, Trophy, Info, Target, MousePointer2, Moon, Sun, Download, ChevronDown, ChevronUp, GitBranch, Egg, Sparkles } from 'lucide-react';
+import BreedingCalculator from './breeding';
 
 // --- BAGIAN PENTING: IMPORT DATA JSON LOKAL ---
 // INSTRUKSI KHUSUS UNTUK LOCAL (VS CODE):
@@ -1563,6 +1564,7 @@ export default function App() {
     { id: 'pokedex', label: t.nav.pokedex, icon: <BookOpen size={20} /> },
     { id: 'movedex', label: t.nav.movedex || 'Movedex', icon: <Sword size={20} /> },
     { id: 'items', label: 'Items', icon: <Backpack size={20} /> },
+    { id: 'breeding', label: 'Breeding', icon: <Egg size={20} /> },
     { id: 'regions', label: t.nav.region, icon: <MapIcon size={20} /> },
     { id: 'guides', label: t.nav.guides, icon: <Star size={20} /> },
     { id: 'settings', label: t.nav.settings, icon: <Upload size={20} /> },
@@ -1611,10 +1613,10 @@ export default function App() {
           {activeView === 'pokedex' && <PokedexPage t={t} lang={lang} allPokemon={allPokemon} setAllPokemon={setAllPokemon} allMoves={allMoves} selectedPokemon={currentPokemon} setSelectedPokemon={setCurrentPokemon} />}
           {activeView === 'movedex' && <MovedexPage t={t} lang={lang} allMoves={allMoves} allPokemon={allPokemon} />}
           {activeView === 'items' && <ItemsPage t={t} items={allItems} />}
+          {activeView === 'breeding' && <BreedingCalculator />}
           {activeView === 'regions' && <RegionsPage t={t} />}
           {activeView === 'guides' && <GuidesPage t={t} />}
           {activeView === 'settings' && <DataImportPage t={t} onDataLoaded={handleDataLoaded} currentStats={{ pokemon: allPokemon.length, moves: allMoves.length }} clearData={clearData} />}
-          {activeView === 'breeding' && <div className="text-center py-20"><Calculator className="w-16 h-16 mx-auto mb-4 text-indigo-300"/><h2 className="text-2xl font-bold dark:text-white">Breeding Calculator</h2><p className="dark:text-gray-400">Coming Soon</p></div>}
         </main>
 
         <footer className="bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 mt-12 py-12 text-center text-gray-500 dark:text-gray-400 text-sm transition-colors duration-300">
