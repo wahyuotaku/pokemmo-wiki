@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Swords, Shield, Heart, Wind, Zap, Activity, Baby, Info, GitCommit, Calculator, CheckCircle2, Archive, Trash2, Download, Save, Tent, ArrowRight, X } from 'lucide-react';
+import { Swords, Shield, Heart, Wind, Zap, Activity, Baby, Info, GitCommit, Calculator, CheckCircle2, Archive, Trash2, Download, Save, Tent, ArrowRight, X, Maximize, Minimize } from 'lucide-react';
 
 // Daftar stat, ikon, dan warnanya
 const STATS = [
@@ -177,6 +177,7 @@ export default function BreedingCalculator() {
   const [treeIvs, setTreeIvs] = useState(['hp', 'atk', 'def', 'spd', 'spe']);
   const [treeNature, setTreeNature] = useState('Adamant');
   const [treeData, setTreeData] = useState(null);
+  const [isTreeFullscreen, setIsTreeFullscreen] = useState(false);
 
   const treeStats = React.useMemo(() => {
     if (!treeData) return null;
@@ -604,25 +605,33 @@ export default function BreedingCalculator() {
               </div>
             </div>
             {treeData && (
-              <div className="bg-gray-100 dark:bg-slate-950 p-6 md:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-slate-800 overflow-x-auto custom-scroll">
+              <div className={isTreeFullscreen ? "fixed inset-0 z-[100] bg-gray-200 dark:bg-slate-950 p-6 md:p-10 overflow-auto custom-scroll w-screen h-screen" : "bg-gray-100 dark:bg-slate-950 p-6 md:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-slate-800 overflow-x-auto custom-scroll"}>
                 
                 {treeStats && (
-                  <div className="mb-8 w-full min-w-fit bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 flex flex-col xl:flex-row gap-6 justify-between items-center">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2 mb-2">
-                        <Calculator size={24} className="text-blue-500" />Estimasi Kebutuhan & Biaya
-                      </h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Total item brace/everstone yang harus dipasang (<span className="text-red-400 text-xs">*belum termasuk biaya gender</span>).</p>
+                  <div className={`mb-8 ${isTreeFullscreen ? 'max-w-6xl mx-auto' : 'w-full min-w-fit'} bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 flex flex-col xl:flex-row gap-6 items-center transition-all`}>
+                    <div className="flex-1 w-full">
+                      <div className="flex flex-wrap items-center gap-3 mb-2">
+                        <h3 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+                          <Calculator size={24} className="text-blue-500" />Estimasi Kebutuhan
+                        </h3>
+                        <button 
+                          onClick={() => setIsTreeFullscreen(!isTreeFullscreen)}
+                          className={`p-1.5 rounded-lg border transition-colors shadow-sm flex items-center gap-2 text-xs font-bold ${isTreeFullscreen ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 dark:bg-red-900/30 dark:border-red-800 dark:hover:bg-red-900/50 dark:text-red-400' : 'bg-gray-100 text-slate-600 border-gray-200 hover:border-blue-400 hover:text-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:border-blue-500 dark:hover:text-blue-400'}`}
+                        >
+                          {isTreeFullscreen ? <><Minimize size={16} /> Tutup Fullscreen</> : <><Maximize size={16} /> Fullscreen Pohon</>}
+                        </button>
+                      </div>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Biaya item dihitung persis dari pohon breeding di bawah (<span className="text-red-400 text-xs">*tanpa biaya kel. ganda</span>).</p>
                     </div>
                     
-                    <div className="flex gap-4 items-center">
+                    <div className="flex gap-4 items-center justify-center">
                       <div className="bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700/50 px-6 py-4 rounded-xl text-center min-w-[160px] shadow-sm transform hover:scale-105 transition-transform">
                         <div className="text-amber-600 dark:text-amber-400 text-xs font-bold uppercase mb-1">Total Biaya Item</div>
                         <div className="text-3xl font-black text-amber-700 dark:text-amber-400">${treeStats.cost.toLocaleString()}</div>
                       </div>
                     </div>
                     
-                    <div className="flex-1 w-full flex flex-wrap gap-2 xl:justify-end">
+                    <div className="flex-1 w-full flex flex-wrap gap-2 justify-center xl:justify-end">
                       {Object.entries(treeStats.items).map(([itemName, count]) => (
                         <div key={itemName} className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 px-3 py-2 rounded-lg flex items-center gap-3 shadow-sm hover:border-blue-400 transition-colors">
                           <span className={`text-sm font-bold ${itemName === 'Everstone' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'}`}>{itemName}</span>
@@ -633,12 +642,12 @@ export default function BreedingCalculator() {
                   </div>
                 )}
 
-                <div className="min-w-max pb-10">
-                  <div className="text-center mb-10 border-b border-gray-300 dark:border-slate-800 pb-4">
-                    <h2 className="text-2xl font-black text-slate-800 dark:text-white">Cetak Biru Pembiakan</h2>
+                <div className={`min-w-max flex flex-col items-center pb-10 transition-all ${isTreeFullscreen ? 'max-w-fit mx-auto bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-gray-200 dark:border-slate-800' : ''}`}>
+                  <div className="text-center mb-10 border-b border-gray-300 dark:border-slate-800 pb-4 w-full">
+                    <h2 className={`font-black text-slate-800 dark:text-white ${isTreeFullscreen ? 'text-3xl' : 'text-2xl'}`}>Cetak Biru Pembiakan</h2>
                     <p className="text-emerald-600 dark:text-emerald-400 font-bold text-lg mt-1 tracking-wide">Target: {treeIvs.length}x31 {treeNature ? treeNature : 'Polos'}</p>
                   </div>
-                  <div className="tree-container flex justify-center"><ul><TreeRender node={treeData} /></ul></div>
+                  <div className="tree-container flex justify-center w-full"><ul><TreeRender node={treeData} /></ul></div>
                 </div>
               </div>
             )}
