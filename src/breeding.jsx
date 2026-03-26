@@ -614,12 +614,6 @@ export default function BreedingCalculator() {
                         <h3 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
                           <Calculator size={24} className="text-blue-500" />Estimasi Kebutuhan
                         </h3>
-                        <button 
-                          onClick={() => setIsTreeFullscreen(!isTreeFullscreen)}
-                          className={`p-1.5 rounded-lg border transition-colors shadow-sm flex items-center gap-2 text-xs font-bold ${isTreeFullscreen ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 dark:bg-red-900/30 dark:border-red-800 dark:hover:bg-red-900/50 dark:text-red-400' : 'bg-gray-100 text-slate-600 border-gray-200 hover:border-blue-400 hover:text-blue-500 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:border-blue-500 dark:hover:text-blue-400'}`}
-                        >
-                          {isTreeFullscreen ? <><Minimize size={16} /> Tutup Fullscreen</> : <><Maximize size={16} /> Fullscreen Pohon</>}
-                        </button>
                       </div>
                       <p className="text-sm text-slate-500 dark:text-slate-400">Biaya item dihitung persis dari pohon breeding di bawah (<span className="text-red-400 text-xs">*tanpa biaya kel. ganda</span>).</p>
                     </div>
@@ -642,10 +636,19 @@ export default function BreedingCalculator() {
                   </div>
                 )}
 
-                <div className={`min-w-max flex flex-col items-center pb-10 transition-all ${isTreeFullscreen ? 'max-w-fit mx-auto bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-gray-200 dark:border-slate-800' : ''}`}>
-                  <div className="text-center mb-10 border-b border-gray-300 dark:border-slate-800 pb-4 w-full">
-                    <h2 className={`font-black text-slate-800 dark:text-white ${isTreeFullscreen ? 'text-3xl' : 'text-2xl'}`}>Cetak Biru Pembiakan</h2>
+                <div className={`min-w-max flex flex-col items-center pb-10 transition-all ${isTreeFullscreen ? 'max-w-fit mx-auto bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-gray-200 dark:border-slate-800 relative mt-6' : 'relative'}`}>
+                  <div className="text-center mb-10 border-b border-gray-300 dark:border-slate-800 pb-4 w-full flex flex-col items-center">
+                    <h2 className={`font-black text-slate-800 dark:text-white flex items-center gap-3 ${isTreeFullscreen ? 'text-3xl' : 'text-2xl'}`}>
+                      Cetak Biru Pembiakan
+                    </h2>
                     <p className="text-emerald-600 dark:text-emerald-400 font-bold text-lg mt-1 tracking-wide">Target: {treeIvs.length}x31 {treeNature ? treeNature : 'Polos'}</p>
+                    
+                    <button 
+                      onClick={() => setIsTreeFullscreen(!isTreeFullscreen)}
+                      className={`mt-4 px-4 py-2 rounded-xl border-2 transition-all shadow-md flex items-center gap-2 text-sm font-black transform hover:-translate-y-1 active:scale-95 z-20 ${isTreeFullscreen ? 'bg-red-500 text-white border-red-400 hover:bg-red-400 hover:border-red-300 dark:bg-red-600 dark:border-red-500 dark:hover:bg-red-500 shadow-red-500/30' : 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-blue-400 hover:from-blue-400 hover:to-indigo-400 shadow-blue-500/30'}`}
+                    >
+                      {isTreeFullscreen ? <><Minimize size={20} /> Tutup Layar Penuh</> : <><Maximize size={20} /> Buka Layar Penuh (Fullscreen)</>}
+                    </button>
                   </div>
                   <div className="tree-container flex justify-center w-full"><ul><TreeRender node={treeData} /></ul></div>
                 </div>
