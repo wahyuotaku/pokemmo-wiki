@@ -75,17 +75,17 @@ const TreeRender = ({ node }) => {
   if (!node) return null;
   return (
     <li>
-      <div className="inline-flex flex-col items-center justify-center p-3 bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-slate-600 rounded-xl shadow-xl relative min-w-[140px] m-2 transition-all hover:-translate-y-1 hover:border-blue-400 hover:shadow-blue-500/20 z-10">
-        <div className="font-extrabold text-sm text-emerald-400 drop-shadow-sm">
+      <div className="inline-flex flex-col items-center justify-center p-4 lg:p-5 bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-slate-600 rounded-2xl shadow-xl relative min-w-[180px] lg:min-w-[220px] m-3 transition-all hover:-translate-y-2 hover:border-blue-400 hover:shadow-blue-500/30 z-10 w-max">
+        <div className="font-extrabold text-base lg:text-lg text-emerald-600 dark:text-emerald-400 drop-shadow-sm mb-2">
           {node.ivs.length === 0 ? 'Base Nature' : `${node.ivs.length}x31`} {node.nature || ''}
         </div>
-        <div className="text-[11px] my-1.5 font-bold uppercase flex flex-wrap justify-center gap-1.5">
+        <div className="text-xs lg:text-sm my-1.5 font-bold uppercase flex flex-wrap justify-center gap-2">
           {node.ivs.length > 0 ? node.ivs.map(i => (
-            <span key={i} className={`${STAT_COLORS[i]} bg-gray-100 dark:bg-slate-900 px-1.5 py-0.5 rounded border border-gray-300 dark:border-slate-700`}>{i}</span>
-          )) : <span className="text-gray-600 dark:text-slate-500 bg-gray-100 dark:bg-slate-900 px-1.5 py-0.5 rounded">Terserah</span>}
+            <span key={i} className={`${STAT_COLORS[i]} bg-gray-100 dark:bg-slate-900 px-2 py-1 rounded-md border border-gray-300 dark:border-slate-700 shadow-sm`}>{i}</span>
+          )) : <span className="text-gray-600 dark:text-slate-400 bg-gray-100 dark:bg-slate-900 px-2 py-1 rounded-md border border-gray-300 dark:border-slate-700 shadow-sm">Terserah</span>}
         </div>
         {node.heldItem && (
-          <div className={`mt-2 text-xs px-2 py-1 rounded w-full text-center whitespace-nowrap font-semibold shadow-inner ${node.heldItem === 'Everstone' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}`}>
+          <div className={`mt-4 text-sm lg:text-base px-3 py-2 rounded-xl w-full text-center whitespace-nowrap font-bold shadow-inner border-2 ${node.heldItem === 'Everstone' ? 'bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-500/50' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-500/50'}`}>
             Beri: {node.heldItem}
           </div>
         )}
@@ -177,6 +177,23 @@ export default function BreedingCalculator() {
   const [treeIvs, setTreeIvs] = useState(['hp', 'atk', 'def', 'spd', 'spe']);
   const [treeNature, setTreeNature] = useState('Adamant');
   const [treeData, setTreeData] = useState(null);
+
+  const treeStats = React.useMemo(() => {
+    if (!treeData) return null;
+    let cost = 0;
+    let items = {};
+    const traverse = (n) => {
+      if(!n) return;
+      if(n.heldItem) {
+        if(n.heldItem === 'Everstone') cost += 5000;
+        else cost += 10000;
+        items[n.heldItem] = (items[n.heldItem] || 0) + 1;
+      }
+      traverse(n.left); traverse(n.right);
+    };
+    traverse(treeData);
+    return { cost, items };
+  }, [treeData]);
 
   // Fungsi Tree Planner
   const toggleTreeIv = (key) => {
@@ -587,11 +604,39 @@ export default function BreedingCalculator() {
               </div>
             </div>
             {treeData && (
-              <div className="bg-gray-900 dark:bg-slate-950 p-8 rounded-xl shadow-2xl border border-gray-800 dark:border-slate-800 overflow-x-auto custom-scrollbar">
+              <div className="bg-gray-100 dark:bg-slate-950 p-6 md:p-8 rounded-xl shadow-2xl border border-gray-300 dark:border-slate-800 overflow-x-auto custom-scroll">
+                
+                {treeStats && (
+                  <div className="mb-8 w-full min-w-fit bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 flex flex-col xl:flex-row gap-6 justify-between items-center">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                        <Calculator size={24} className="text-blue-500" />Estimasi Kebutuhan & Biaya
+                      </h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Total item brace/everstone yang harus dipasang (<span className="text-red-400 text-xs">*belum termasuk biaya gender</span>).</p>
+                    </div>
+                    
+                    <div className="flex gap-4 items-center">
+                      <div className="bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700/50 px-6 py-4 rounded-xl text-center min-w-[160px] shadow-sm transform hover:scale-105 transition-transform">
+                        <div className="text-amber-600 dark:text-amber-400 text-xs font-bold uppercase mb-1">Total Biaya Item</div>
+                        <div className="text-3xl font-black text-amber-700 dark:text-amber-400">${treeStats.cost.toLocaleString()}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex-1 w-full flex flex-wrap gap-2 xl:justify-end">
+                      {Object.entries(treeStats.items).map(([itemName, count]) => (
+                        <div key={itemName} className="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 px-3 py-2 rounded-lg flex items-center gap-3 shadow-sm hover:border-blue-400 transition-colors">
+                          <span className={`text-sm font-bold ${itemName === 'Everstone' ? 'text-purple-600 dark:text-purple-400' : 'text-blue-600 dark:text-blue-400'}`}>{itemName}</span>
+                          <span className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 text-sm font-black px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700 shadow-inner">x{count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="min-w-max pb-10">
-                  <div className="text-center mb-10 border-b border-gray-700 dark:border-slate-800 pb-4">
-                    <h2 className="text-2xl font-black text-gray-900 dark:text-white">Cetak Biru Pembiakan</h2>
-                    <p className="text-emerald-400 font-medium">Target: {treeIvs.length}x31 {treeNature ? treeNature : 'Polos'}</p>
+                  <div className="text-center mb-10 border-b border-gray-300 dark:border-slate-800 pb-4">
+                    <h2 className="text-2xl font-black text-slate-800 dark:text-white">Cetak Biru Pembiakan</h2>
+                    <p className="text-emerald-600 dark:text-emerald-400 font-bold text-lg mt-1 tracking-wide">Target: {treeIvs.length}x31 {treeNature ? treeNature : 'Polos'}</p>
                   </div>
                   <div className="tree-container flex justify-center"><ul><TreeRender node={treeData} /></ul></div>
                 </div>
